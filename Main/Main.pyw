@@ -30,7 +30,7 @@ class Window(FramelessWindow):
         w, h = screen.width(), screen.height()
         self.move(w//2 - self.width()//2, h//2 - self.height()//2)
 
-        qss_path = "Main\demo.qss"
+        qss_path = "Main\style.qss"
         with open(qss_path, encoding='utf-8') as f:
             self.setStyleSheet(f.read())
 
