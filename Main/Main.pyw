@@ -45,7 +45,6 @@ class Window(FramelessWindow):
 
 
 
-
         self.gridLayout = QGridLayout(self)
         self.gridLayout.addWidget(self.transparentPushButton1,0 , 1)
 
@@ -59,9 +58,9 @@ class Window(FramelessWindow):
 
         if key == Qt.Key.Key_S:
             os.system("start ms-settings:apps-volume")
+        if key == Qt.Key.Key_Backspace:
+            QApplication.instance().quit()
             
-            
-
         # elif blah blah blah
 
         super().keyPressEvent(event)
