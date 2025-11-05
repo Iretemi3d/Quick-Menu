@@ -5,10 +5,12 @@ from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QWidget,QGridLa
 from qframelesswindow import FramelessWindow, StandardTitleBar
 from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme, FluentWindow,
                             NavigationAvatarWidget, qrouter, SubtitleLabel, setFont, InfoBadge,
-                            InfoBadgePosition, FluentBackgroundTheme, FluentTranslator, TransparentPushButton)
+                            InfoBadgePosition, FluentBackgroundTheme, FluentTranslator, TransparentPushButton,setCustomStyleSheet,
+                            CustomStyleSheet, PushButton, PrimaryPushButton,)
 from qfluentwidgets import FluentIcon as FIF
 import keyboard
 import threading
+import subprocess
 
 
 class HotkeySignal(QObject):
@@ -29,24 +31,62 @@ class Window(FramelessWindow):
         screen = QApplication.primaryScreen().availableGeometry()
         w, h = screen.width(), screen.height()
         self.move(w//2 - self.width()//2, h//2 - self.height()//2)
-
-        qss_path = "Main\style.qss"
-        with open(qss_path, encoding='utf-8') as f:
-            self.setStyleSheet(f.read())
-
+        self.setStyleSheet("Window { background-color: rgba(40, 40, 40, 0.85); border: 2px solid red; border-radius: 9px;}")
         #functs
         def soundset():
             os.system("start ms-settings:apps-volume")
 
+        def codeset():
+            user = os.environ['USERNAME']
+            try:
+                vspath = fr"C:\Users\{user}\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+                gitpath = fr"C:\Users\{user}\AppData\Local\GitHubDesktop\GitHubDesktop.exe"
 
-        self.transparentPushButton1 = TransparentPushButton('Sound settings', self)
-        self.transparentPushButton1.setMinimumHeight(20)
+                subprocess.Popen([gitpath], creationflags=subprocess.CREATE_NO_WINDOW)
+                subprocess.Popen([vspath], creationflags=subprocess.CREATE_NO_WINDOW)
+
+            except Exception as e:
+                with open("log.txt","w") as f:
+                    f.writelines("Error occured: " + str(e))
+
+        
+
+        self.transparentPushButton1 = PrimaryPushButton('Sound settings', self)
+        self.transparentPushButton1.setMinimumHeight(40)
         self.transparentPushButton1.clicked.connect(soundset)
+
+        self.transparentPushButton2 = PrimaryPushButton('Code Start', self)
+        self.transparentPushButton2.setMinimumHeight(40)
+        self.transparentPushButton2.clicked.connect(codeset)
+        
+       
+        qss = """
+            PrimaryPushButton {
+                border: 2px solid black;
+                border-radius: 4px;
+                background-color: rgba(255, 255, 255, 0.1);
+                color: white;
+            }
+            PrimaryPushButton:hover {
+                background-color: rgba(255, 255, 255, 0.15);
+                border-color: #ff5555;
+            }
+            PrimaryPushButton:pressed {
+                background-color: rgba(255, 255, 255, 0.2);
+                border-color: #ff3333;
+            }
+        """
+
+
+        self.transparentPushButton1.setStyleSheet(qss)
+        self.transparentPushButton2.setStyleSheet(qss)
+
 
 
 
         self.gridLayout = QGridLayout(self)
         self.gridLayout.addWidget(self.transparentPushButton1,0 , 1)
+        self.gridLayout.addWidget(self.transparentPushButton2,1 , 1)
 
 
 
