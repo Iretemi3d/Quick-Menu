@@ -11,6 +11,7 @@ from qfluentwidgets import FluentIcon as FIF
 import keyboard
 import threading
 import subprocess
+import webbrowser
 
 
 class HotkeySignal(QObject):
@@ -37,6 +38,7 @@ class Window(FramelessWindow):
             os.system("start ms-settings:apps-volume")
 
         def codeset():
+            global user
             user = os.environ['USERNAME']
             try:
                 vspath = fr"C:\Users\{user}\AppData\Local\Programs\Microsoft VS Code\Code.exe"
@@ -49,7 +51,20 @@ class Window(FramelessWindow):
                 with open("log.txt","w") as f:
                     f.writelines("Error occured: " + str(e))
 
-        
+        def sigint():
+            try:
+                binNin = fr"C:\Users\{user}\AppData\Local\Programs\Vector35\BinaryNinja\binaryninja.exe"
+                webbrowser.open('https://pwn.college')
+                webbrowser.open('https://x64.syscall.sh')
+                webbrowser.open('https://pwnable.sigint.mx/challenges')
+
+                subprocess.Popen([binNin], creationflags=subprocess.CREATE_NO_WINDOW)
+
+            except Exception as e:
+                with open("log.txt","w") as f:
+                    f.writelines("Error occured: " + str(e))
+
+                
 
         self.transparentPushButton1 = PrimaryPushButton('Sound settings', self)
         self.transparentPushButton1.setMinimumHeight(40)
@@ -58,6 +73,10 @@ class Window(FramelessWindow):
         self.transparentPushButton2 = PrimaryPushButton('Code Start', self)
         self.transparentPushButton2.setMinimumHeight(40)
         self.transparentPushButton2.clicked.connect(codeset)
+        
+        self.transparentPushButton3 = PrimaryPushButton('SIGINT', self)
+        self.transparentPushButton3.setMinimumHeight(40)
+        self.transparentPushButton3.clicked.connect(sigint)
         
        
         qss = """
@@ -80,6 +99,7 @@ class Window(FramelessWindow):
 
         self.transparentPushButton1.setStyleSheet(qss)
         self.transparentPushButton2.setStyleSheet(qss)
+        self.transparentPushButton3.setStyleSheet(qss)
 
 
 
@@ -87,6 +107,7 @@ class Window(FramelessWindow):
         self.gridLayout = QGridLayout(self)
         self.gridLayout.addWidget(self.transparentPushButton1,0 , 1)
         self.gridLayout.addWidget(self.transparentPushButton2,1 , 1)
+        self.gridLayout.addWidget(self.transparentPushButton3,3 , 1)
 
 
 
@@ -117,7 +138,7 @@ if __name__ == "__main__":
     setTheme(Theme.DARK)
     w = Window()
     
-    w.setWindowFlags(w.windowFlags() | Qt.WindowType.Tool)
+    w.setWindowFlags(w.windowFlags() | Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Tool)
     w.show()  
     app.processEvents()
     w.hide()  
@@ -131,10 +152,14 @@ if __name__ == "__main__":
         if w.isHidden():
             w.show()
             app.processEvents()
+
+            w.raise_()
+            app.processEvents()
             
             if w.windowState() & Qt.WindowState.WindowMinimized:
                 w.setWindowState(Qt.WindowState.WindowNoState)
                 app.processEvents()
+
             w.raise_()
             app.processEvents()
             
@@ -166,5 +191,4 @@ if __name__ == "__main__":
     threading.Thread(target=hotkey_listener, daemon=True).start()
     app.exec()
 
-    
-    
+
