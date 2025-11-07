@@ -147,7 +147,7 @@ class Window(FramelessWindow):
             os.system("start ms-settings:apps-volume")
         elif key == Qt.Key.Key_C:
             codeset()
-        elif key == Qt.Key.Key_Backspace:
+        elif key == Qt.Key.Key_Delete:
             QApplication.instance().quit()
         
 
