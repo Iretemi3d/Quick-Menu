@@ -37,6 +37,7 @@ class Window(FramelessWindow):
         def soundset():
             os.system("start ms-settings:apps-volume")
 
+        global codeset
         def codeset():
             global user
             user = os.environ['USERNAME']
@@ -111,24 +112,24 @@ class Window(FramelessWindow):
 
 
 
-
-
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+
+
     def keyPressEvent(self, event):
         key = event.key()
 
         if key == Qt.Key.Key_S:
             os.system("start ms-settings:apps-volume")
-        if key == Qt.Key.Key_Backspace:
+        elif key == Qt.Key.Key_C:
+            codeset()
+        elif key == Qt.Key.Key_Backspace:
             QApplication.instance().quit()
+
             
         # elif blah blah blah
 
         super().keyPressEvent(event)
 
-
-
-            
 
     
 
