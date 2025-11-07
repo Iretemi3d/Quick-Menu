@@ -1,12 +1,8 @@
 import sys,os
-from PySide6.QtCore import Qt, QUrl, QTimer, QObject, Signal
-from PySide6.QtGui import QIcon, QDesktopServices
-from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QWidget,QGridLayout
-from qframelesswindow import FramelessWindow, StandardTitleBar
-from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme, FluentWindow,
-                            NavigationAvatarWidget, qrouter, SubtitleLabel, setFont, InfoBadge,
-                            InfoBadgePosition, FluentBackgroundTheme, FluentTranslator, TransparentPushButton,setCustomStyleSheet,
-                            CustomStyleSheet, PushButton, PrimaryPushButton,)
+from PySide6.QtCore import Qt, QObject, Signal
+from PySide6.QtWidgets import QApplication, QWidget,QGridLayout
+from qframelesswindow import FramelessWindow
+from qfluentwidgets import (setTheme, Theme, PrimaryPushButton, LineEdit, setThemeColor)
 from qfluentwidgets import FluentIcon as FIF
 import keyboard
 import threading
@@ -34,13 +30,16 @@ class Window(FramelessWindow):
         self.move(w//2 - self.width()//2, h//2 - self.height()//2)
         self.setStyleSheet("Window { background-color: rgba(40, 40, 40, 0.85); border: 2px solid red; border-radius: 9px;}")
         #functs
+        global user
+        user = os.environ['USERNAME']
+        
+
         def soundset():
             os.system("start ms-settings:apps-volume")
 
         global codeset
         def codeset():
-            global user
-            user = os.environ['USERNAME']
+            
             try:
                 vspath = fr"C:\Users\{user}\AppData\Local\Programs\Microsoft VS Code\Code.exe"
                 gitpath = fr"C:\Users\{user}\AppData\Local\GitHubDesktop\GitHubDesktop.exe"
@@ -51,6 +50,7 @@ class Window(FramelessWindow):
             except Exception as e:
                 with open("log.txt","w") as f:
                     f.writelines("Error occured: " + str(e))
+
 
         def sigint():
             try:
@@ -65,6 +65,11 @@ class Window(FramelessWindow):
                 with open("log.txt","w") as f:
                     f.writelines("Error occured: " + str(e))
 
+
+
+
+
+
                 
 
         self.transparentPushButton1 = PrimaryPushButton('Sound settings', self)
@@ -78,6 +83,14 @@ class Window(FramelessWindow):
         self.transparentPushButton3 = PrimaryPushButton('SIGINT', self)
         self.transparentPushButton3.setMinimumHeight(40)
         self.transparentPushButton3.clicked.connect(sigint)
+
+
+
+        self.txtLine = LineEdit(self)
+        self.txtLine.setClearButtonEnabled(True)
+        self.txtLine.setMinimumHeight(35)
+        self.txtLine.returnPressed.connect(self.readtxt)
+        
         
        
         qss = """
@@ -97,10 +110,21 @@ class Window(FramelessWindow):
             }
         """
 
-
+        qsstxtline = """
+            LineEdit {
+                border: 2px solid black;
+                border-radius: 4px;
+                background-color: rgba(255, 255, 255, 0.1);
+                color: white;
+                }
+                """
+        
+#style sheet
         self.transparentPushButton1.setStyleSheet(qss)
         self.transparentPushButton2.setStyleSheet(qss)
         self.transparentPushButton3.setStyleSheet(qss)
+        self.txtLine.setStyleSheet(qsstxtline)
+
 
 
 
@@ -108,7 +132,8 @@ class Window(FramelessWindow):
         self.gridLayout = QGridLayout(self)
         self.gridLayout.addWidget(self.transparentPushButton1,0 , 1)
         self.gridLayout.addWidget(self.transparentPushButton2,1 , 1)
-        self.gridLayout.addWidget(self.transparentPushButton3,3 , 1)
+        self.gridLayout.addWidget(self.transparentPushButton3,2 , 1)
+        self.gridLayout.addWidget(self.txtLine,4,1)
 
 
 
@@ -124,12 +149,22 @@ class Window(FramelessWindow):
             codeset()
         elif key == Qt.Key.Key_Backspace:
             QApplication.instance().quit()
+        
 
-            
-        # elif blah blah blah
 
         super().keyPressEvent(event)
 
+
+    def readtxt(self):
+            inp = self.txtLine.text()
+            if inp[0:3] == "cmd:":
+                print("commands")
+            else:
+                url = "http://www.google.com/search?q="
+                search = url+inp.replace(" ","+")
+                webbrowser.open(search)
+            
+            self.txtLine.clear()
 
     
 
@@ -137,6 +172,7 @@ class Window(FramelessWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     setTheme(Theme.DARK)
+    setThemeColor('#FF0000')
     w = Window()
     
     w.setWindowFlags(w.windowFlags() | Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Tool)
